@@ -1,0 +1,85 @@
+const apiKey = 'VF.DM.658e044ad7bebc00071bbd11.IB2dwz97FYiDcAFH'//process.env.API_KEY
+const userID = '11'; // Unique ID used to track conversation state
+const versionID = '658df316ba0264c210ba3b7f'//process.env.VERSION_ID; // Unique ID of the Voiceflow version to use for interaction
+// POST: Interact
+const botInteract = async () => {
+    try {
+      // clear userID to start
+      await fetch(`https://general-runtime.voiceflow.com/state/${versionID}/user/${userID}`,
+      {
+        method: `DELETE`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          'Access-Control-Allow-Origin': '*',
+      }});
+
+      const response = await fetch(`https://general-runtime.voiceflow.com/state/${versionID}/user/${userID}/interact`,
+      {
+        method: `POST`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          'Access-Control-Allow-Origin': '*',
+      }});
+      const responseData = await response.json();
+      let list = [];
+      for (let i = 0; i < responseData.length; i++) {
+        if (responseData[i].payload && responseData[i].payload.message) {
+          list.push(responseData[i].payload.message)
+        }
+      }
+      return list;
+    } catch (error) {
+      console.log(error)
+    }
+}
+// PUT: Update 
+const botUpdate = async (userInput) => {
+  const requestBody = {
+    action: {
+      type: 'text',
+      payload: userInput,
+    },
+  };
+  try {
+    const response = await fetch(`https://general-runtime.voiceflow.com/state/${versionID}/user/${userID}/interact`,
+      {
+        method: `POST`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+    const responseData = await response.json();
+    
+    let list = [];
+    for (let i = 0; i < responseData.length; i++) {
+      if ( responseData[i].payload && responseData[i].payload.message) {
+        list.push(responseData[i].payload.message)
+      }
+    }
+    
+
+    let intent = 0; // DEFAULT INTENT
+    if (responseData[0].payload.path === "choice:1"){
+      intent = 1  // MINT NFT INTENT
+    }
+    if ((responseData[0].payload.path === "choice:2")){
+      intent = 2  // SELL NFT INTENT
+    }
+    return {list, intent};
+  } catch (error) {
+    console.error('Error updating:', error.message || error);
+  }
+};
+
+
+module.exports = {
+  botInteract, 
+  botUpdate
+  }
+;
