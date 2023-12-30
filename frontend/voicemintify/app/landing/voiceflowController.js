@@ -63,15 +63,7 @@ const botUpdate = async (userInput) => {
       }
     }
     
-
-    let intent = 0; // DEFAULT INTENT
-    if (responseData[0].payload.path === "choice:1"){
-      intent = 1  // MINT NFT INTENT
-    }
-    if ((responseData[0].payload.path === "choice:2")){
-      intent = 2  // SELL NFT INTENT
-    }
-    return {list, intent};
+    return list;
   } catch (error) {
     console.error('Error updating:', error.message || error);
   }

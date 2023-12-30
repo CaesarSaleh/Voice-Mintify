@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, Fragment } from "react";
 import { Menu, Popover, Transition  } from "@headlessui/react";
 import {botInteract, botUpdate, botDelete} from "./voiceflowController";
 import useSpeechRecognition from "./speech";
+import handleFunction from "./handleFunction";
 
 
 //=============================Messaging======================================
@@ -12,6 +13,7 @@ export default function Landing() {
 
   const [inputValue, setInputValue] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
+  const [intent, setIntent] = useState(0);
 
   const {
     text,
@@ -29,8 +31,6 @@ const handleKeyDown = (event) => {
   }
 };
 
-  
-
   const router = useRouter()
   let count = 1
 
@@ -47,13 +47,12 @@ const handleKeyDown = (event) => {
   const initializeInteraction = async () => {
     try {
       const initialMessages = await botInteract();
-      console.log(initialMessages);
       // Use Promise.all to wait for all promises to resolve
       await Promise.all(initialMessages.map(async (message) => {
         // Process each message and add it to chatMessages
         setChatMessages((prevMessages) => [
           ...prevMessages,
-          { type: "bot", text: message }
+          { type: "bot", text: message.slice(0,-1) }
         ]);
       }));
     } catch (error) {
@@ -69,16 +68,15 @@ const handleKeyDown = (event) => {
       ]) 
       try {
         // Send user input and get the bot's response
-        const {list, intent} = await botUpdate(text);
+        const list = await botUpdate(text);
 
         // Update state based on previous state using the functional form
         if (list){
           setChatMessages((prevChatMessages) => [
             ...prevChatMessages,
-            ...list.map((message) => ({ type: "bot", text: message })),
+            ...list.map((message) => ({ type: "bot", text: message.slice(0,-1) })),
           ]);
         }
-        handleIntent(intent);
       } catch (error) {
         console.error("Error updating interaction:", error);
       }
@@ -88,49 +86,62 @@ const handleKeyDown = (event) => {
           ...prevChatMessages,
           { type: "user", text: inputValue },
         ]) 
-        try {
-          // Send user input and get the bot's response
-          const {list, intent} = await botUpdate(inputValue);
-  
-          // Update state based on previous state using the functional form
-          if (list){
-            setChatMessages((prevChatMessages) => [
-              ...prevChatMessages,
-              ...list.map((message) => ({ type: "bot", text: message })),
-            ]);
-          }
-          handleIntent(intent);
-        } catch (error) {
-          console.error("Error updating interaction:", error);
-        }
+        const newInputValue = await handleFunction(intent, inputValue);
+        handleAll(newInputValue)
         setInputValue("");
     }
-
-
   };
 
-  const handleIntent = (intent) => {
-    switch (intent) {
-      case 1:
-        // Handle intent 1
-        // wait for after upload button appears and successfully uploaded
-        break;
-      case 2:
-        // Handle intent 2
-        // wait for after public ID is input
-        break;
-      default:
-        // Handle default intent
-        break;
-    }
-    
-  }  
-
   const handleInputChange = (e) => {
+
     setInputValue(e.target.value);
   }
 
+  //===============================================================================================================================
+
+  const handleFacialRecognition = async () => {
+    // Open the new window
+    window.open("https://google.com", "_blank");
+    handleAll("yes");
+  }
   
+  const handleMint = async () => {
+    handleAll("I want to mint my art.");
+  }
+
+  const handleWallet = async () => {
+    handleAll("I want to see my wallet.");
+  }
+
+  const handleSell = async () => {
+    handleAll("I want to sell this work to someone!")
+  }
+  
+  const handleBye = async () => {
+    handleAll("Bye bye")
+  }
+
+  const handleAll = async (input) => {
+    try {
+      // Send user input and get the bot's response
+      const list = await botUpdate(input);
+      // Update state based on previous state using the functional form
+      if (list){
+        setChatMessages((prevChatMessages) => [
+          ...prevChatMessages,
+          ...list.map((message) => ({ type: "bot", text: message.slice(0,-1) })),
+        ]);
+      }
+      console.log(list)
+      setIntent(parseInt(list[list.length - 1].charAt(list[list.length - 1].length - 1)));
+      console.log(intent);
+    } catch (error) {
+      console.error("Error updating interaction:", error);
+    }
+  }
+
+  
+
   return (
       // <div>Hello from landing!</div>
       <>
@@ -212,23 +223,42 @@ const handleKeyDown = (event) => {
                       {chatMessages.map((message, index) => (
                         <div
                           key = {index} className={`flex items-start ${message.type === "user" ? "bg-gray-300 self-end" : "bg-blue-700"} p-2 rounded-lg max-w-full`}>
-                            <p className={`${
-                                  message.type === "bot"
-                                    ? "text-white"
-                                    : "text-black"
-                                }`}>{message.text}</p>
+                            <p
+                              className={`${
+                              message.type === "bot" ? "text-white" : "text-black"
+                              } overflow-hidden break-words max-w-full`}
+                              >
+                              {message.text}
+                            </p>
                         </div>))
                       }
-                      {/* Your "View NFT" button */}
-                      <button className="rounded-full border border-blue-700 text-blue-700 p-1 mt-2">
-                        Mint NFT
-                      </button>
-                      <button className="rounded-full border border-blue-700 text-blue-700 p-1 mt-2">
-                        Sell NFT
-                      </button>
-                      <button className="rounded-full border border-blue-700 text-blue-700 p-1 mt-2">
-                        View NFT
-                      </button>
+                      {/* Conditional rendering of buttons */}
+                      {(intent === 5 || intent === 1) && (
+                        <div className="mt-2">
+                          {intent === 1 && 
+                            <button onClick={handleFacialRecognition} className="text-xs rounded-full border border-blue-700 text-blue-700 p-1">
+                              Face Recognition
+                            </button>}
+
+                          {intent === 5 &&
+                            <>
+                            <button onClick={handleMint} className="text-xs rounded-full border border-blue-700 text-blue-700 p-1 mr-1">
+                              Mint NFT
+                            </button>
+                            <button onClick={handleWallet} className="text-xs rounded-full border border-blue-700 text-blue-700 p-1 mr-1">
+                              View Wallet
+                            </button>
+                            <button onClick={handleSell} className="text-xs rounded-full border border-blue-700 text-blue-700 p-1 mr-1">
+                              Sell NFT
+                            </button>
+                            <button onClick={handleBye} className="text-xs rounded-full border border-blue-700 text-blue-700 p-1 mr-1">
+                              Nope
+                            </button>
+                            </>
+                          }
+                          
+                        </div>
+                      )}
                     </div>
                   </div>
 
