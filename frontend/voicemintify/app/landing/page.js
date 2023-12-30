@@ -29,6 +29,85 @@ const handleKeyDown = (event) => {
   }
 };
 
+  
+
+  const router = useRouter()
+  let count = 1
+
+  useEffect(() => {
+    // Initialize the interaction when the component mounts
+    if (count) {
+
+      initializeInteraction();
+    } 
+    count--;
+    
+  }, []);
+
+  const initializeInteraction = async () => {
+    try {
+      const initialMessages = await botInteract();
+      console.log(initialMessages);
+      // Use Promise.all to wait for all promises to resolve
+      await Promise.all(initialMessages.map(async (message) => {
+        // Process each message and add it to chatMessages
+        setChatMessages((prevMessages) => [
+          ...prevMessages,
+          { type: "bot", text: message }
+        ]);
+      }));
+    } catch (error) {
+      console.error("Error initializing interaction:", error);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (text.trim() !== ""){
+      setChatMessages((prevChatMessages) => [
+        ...prevChatMessages,
+        { type: "user", text: text },
+      ]) 
+      try {
+        // Send user input and get the bot's response
+        const {list, intent} = await botUpdate(text);
+
+        // Update state based on previous state using the functional form
+        if (list){
+          setChatMessages((prevChatMessages) => [
+            ...prevChatMessages,
+            ...list.map((message) => ({ type: "bot", text: message })),
+          ]);
+        }
+        handleIntent(intent);
+      } catch (error) {
+        console.error("Error updating interaction:", error);
+      }
+      resetText();
+  } else if (inputValue.trim() !== ""){
+        setChatMessages((prevChatMessages) => [
+          ...prevChatMessages,
+          { type: "user", text: inputValue },
+        ]) 
+        try {
+          // Send user input and get the bot's response
+          const {list, intent} = await botUpdate(inputValue);
+  
+          // Update state based on previous state using the functional form
+          if (list){
+            setChatMessages((prevChatMessages) => [
+              ...prevChatMessages,
+              ...list.map((message) => ({ type: "bot", text: message })),
+            ]);
+          }
+          handleIntent(intent);
+        } catch (error) {
+          console.error("Error updating interaction:", error);
+        }
+        setInputValue("");
+    }
+
+
+  };
 
   const handleIntent = (intent) => {
     switch (intent) {
