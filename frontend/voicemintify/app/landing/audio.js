@@ -24,3 +24,25 @@ const useSpeechRecognition = () => {
         };
     }, []);
 
+    const startListening = () => {
+        setText("");
+        setIsListening(true);
+        recognition.start();
+    }
+    const stopListening = () => {
+        setIsListening(false);
+        recognition.stop();
+    };
+
+    const resetText = () => setText("");
+
+    return {
+        text, 
+        isListening,
+        startListening,
+        resetText,
+        hasRecognitionSupport: !!recognition,
+    };
+};
+
+export default useSpeechRecognition;
