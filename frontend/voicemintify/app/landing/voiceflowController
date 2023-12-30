@@ -4,15 +4,7 @@ const versionID = '658df316ba0264c210ba3b7f'//process.env.VERSION_ID; // Unique 
 // POST: Interact
 const botInteract = async () => {
     try {
-      // clear userID to start
-      await fetch(`https://general-runtime.voiceflow.com/state/${versionID}/user/${userID}`,
-      {
-        method: `DELETE`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-          'Access-Control-Allow-Origin': '*',
-      }});
+      
 
       const response = await fetch(`https://general-runtime.voiceflow.com/state/${versionID}/user/${userID}/interact`,
       {
