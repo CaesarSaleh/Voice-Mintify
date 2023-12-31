@@ -9,13 +9,39 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "^18",
+    "@hashgraph/sdk": "^2.39.0",
+    "@headlessui/react": "^1.7.17",
+    "aws-amplify": "^6.0.9",
+    "axios": "^1.6.3",
+    "cors": "^2.8.5",
+    "dns": "^0.2.2",
+    "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
+    "http2": "^3.3.7",
+    "net": "^1.0.2",
+    "next": "14.0.4",
+    "npm": "9.8.1",
+    "react": "^18.2.0",
     "react-dom": "^18",
-    "next": "14.0.4"
+    "tls": "^0.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
     "tailwindcss": "^3.3.0"
+  },
+  "browser": {
+    "child_process": false,
+    "crypto": false,
+    "constants": false,
+    "fs": false,
+    "http": false,
+    "https": false,
+    "net": false,
+    "tls": false,
+    "zlib": false,
+    "path": false,
+    "bufferutil": false,
+    "utf-8-validate": false
   }
 }
