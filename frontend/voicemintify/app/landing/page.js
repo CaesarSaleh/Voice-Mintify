@@ -1,20 +1,121 @@
-"use client";
+"use client"
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState, useEffect, useCallback, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Menu, Popover, Transition  } from "@headlessui/react";
-import {botInteract, botUpdate, botDelete} from "./voiceflowController";
+import {botInteract, botUpdate} from "./voiceflowController";
 import useSpeechRecognition from "./speech";
-import handleFunction from "./handleFunction";
 
-
-//=============================Messaging======================================
 export default function Landing() {
-
+  
   const [inputValue, setInputValue] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [intent, setIntent] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [sellerID, setSellerID] = useState("");
+  const [privateKey, setPrivateKey] = useState("");
+  const [buyerID, setBuyerID] = useState("");
+  // const [tokenID, setTokenID] = useState("");
 
+  
+
+  const handleFileChange = async (event) => {
+
+    const file = event.target.files[0];
+    // Display a preview of the selected image
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+      console.log("Uploading file:", selectedFile);
+
+
+      // Example data for the mintNFT request
+      const mintNFTData = {
+        id: 'QmSPr4ZSibpZqvx7KGdjEMZszMZVb4mHXqNB2GsmHeMk3B',
+        sellerId: sellerID,
+        privateKey: privateKey
+      };
+      let tokenID = '';
+      // Making the POST request
+      await fetch("http://localhost:3500/mintNFT", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mintNFTData),
+      })
+        .then(response => response.json())
+        .then(result => {
+          tokenID = result;
+        })
+        .catch(error => {
+          console.error('Error making POST request:', error);
+        });
+      handleAll("yes")
+      setChatMessages((prevMessages) => [
+        ...prevMessages,
+        { type: "bot", text: "Your TOKEN ID: "+ tokenID },]
+        );
+    } else {
+      setPreviewImage(null);
+      console.log("No file selected");
+    }
+    setSelectedFile(file);
+  };
+
+  const handleUpload = async () => {}
+  //   // Add your file upload logic here
+  //   if (selectedFile) {
+  //     console.log("Uploading file:", selectedFile);
+
+  //     // Call Marshal's botUpdate2 and pass in the CID
+  //     console.log("===========================================")
+  //     // api call
+
+  //     // Example data for the mintNFT request
+  //     const mintNFTData = {
+  //       id: 'QmUQd912vbHPrzZhurf7P3Q6NPZZnnxo5gGDg5yimYGjwz',
+  //       sellerId: '0.0.6861612',
+  //       privateKey: '302e020100300506032b6570042204204b7a717128838c016055c65ea5edcdbe60a09dfc5dff1b2e552f34492940baea'
+  //     };
+  //     let tokenID = '';
+  //     // Making the POST request
+  //     await fetch("http://localhost:3500/mintNFT", {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(mintNFTData),
+  //     })
+  //       .then(response => response.json())
+  //       .then(result => {
+  //         tokenID = result.tokenId;
+  //       })
+  //       .catch(error => {
+  //         console.error('Error making POST request:', error);
+  //       });
+  //       console.log("===========================================")
+  //       console.log(tokenID)
+  //       console.log("===========================================")
+  //     handleAll("yes")
+  //     setChatMessages((prevMessages) => [
+  //       ...prevMessages,
+  //       { type: "bot", text: "Your TOKEN ID: "+ tokenID },]
+  //       );
+  //     // Reset selected file and preview after upload (if needed)
+  //     setSelectedFile(null);
+  //     setPreviewImage(null);
+  //   } else {
+  //     console.log("No file selected");
+  //   }
+  // };
+
+  
+  
   const {
     text,
     isListening,
@@ -86,15 +187,98 @@ const handleKeyDown = (event) => {
           ...prevChatMessages,
           { type: "user", text: inputValue },
         ]) 
-        const newInputValue = await handleFunction(intent, inputValue);
-        handleAll(newInputValue)
-        setInputValue("");
-    }
+        if (intent === 4){
+          setBuyerID(inputValue)
+          // Example data for the mintNFT request
+          const sellNFTData = {
+            sellerId: sellerID,
+            sellerKey: privateKey,
+            buyerId: buyerID
+          };
+          // Making the POST request
+          await fetch("http://localhost:3500/sellNFT", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(sellNFTData),
+          });
+          handleAll("yes")
+            } else if (intent === 3){
+              console.log("provide link")
+              handleAll("yes")
+            } else if (intent === 0){
+              const newInputValue = await handleVerifyWalletId(intent, inputValue);
+              handleAll(newInputValue)
+            }
+            setInputValue("");
+          }
   };
 
   const handleInputChange = (e) => {
 
     setInputValue(e.target.value);
+  }
+
+  //===============================================================================================================================
+  const handleVerifyWalletId = async (intent, inputValue) => {
+    if (intent === 0){
+      setSellerID(inputValue.slice(0,11));
+      setPrivateKey(inputValue.slice(12,inputValue.length));
+      return "yes";
+    }
+    return inputValue
+  }
+
+  useEffect(() => {
+    console.log("Seller ID:", sellerID);
+    console.log("Private Key:", privateKey);
+    console.log("Buyer ID:", buyerID);
+  }, [sellerID, privateKey, buyerID]);
+
+  const handleViewWallet = async () => {
+    window.open("https://wallet.hashpack.app/");
+    handleAll("yes");
+  }
+
+  const handleFacialRecognition = async () => {
+    // Open the new window
+    window.open("http://127.0.0.1:4000/video_feed", "_blank");
+    handleAll("yes");
+  }
+  
+  const handleMint = async () => {
+    handleAll("I want to mint my art.");
+  }
+
+  const handleWallet = async () => {
+    handleAll("I want to see my wallet.");
+  }
+
+  const handleSell = async () => {
+    handleAll("I want to sell this work to someone!")
+  }
+  
+  const handleBye = async () => {
+    handleAll("Bye bye")
+  }
+
+  const handleAll = async (input) => {
+    try {
+      // Send user input and get the bot's response
+      const list = await botUpdate(input);
+      // Update state based on previous state using the functional form
+      if (list){
+        setChatMessages((prevChatMessages) => [
+          ...prevChatMessages,
+          ...list.map((message) => ({ type: "bot", text: message.slice(0,-1) })),
+        ]);
+      }
+      setIntent(parseInt(list[list.length - 1].charAt(list[list.length - 1].length - 1)));
+    } catch (error) {
+      console.error("Error updating interaction:", error);
+    }
+
   }
 
   //===============================================================================================================================
@@ -104,7 +288,7 @@ const handleKeyDown = (event) => {
     window.open("https://google.com", "_blank");
     handleAll("yes");
   }
-  
+
   const handleMint = async () => {
     handleAll("I want to mint my art.");
   }
@@ -159,7 +343,7 @@ const handleKeyDown = (event) => {
                         <Menu.Button className="relative flex rounded-full bg-white text-sm ring-2 ring-white ring-opacity-20 focus:outline-none focus:ring-opacity-100">
                           <span className="absolute -inset-1.5" />
                           <span className="sr-only">Open user menu</span>
-                          <img className="h-12 w-12 rounded-full" src="/user.jpg" />
+                          <img className="h-12 w-12 rounded-full" src="/user.png" />
                         </Menu.Button>
                       </div>
                       <Transition
@@ -222,7 +406,9 @@ const handleKeyDown = (event) => {
                     <div className="flex flex-col items-start space-y-2 ">
                       {chatMessages.map((message, index) => (
                         <div
+
                           key = {index} className={`flex items-start ${message.type === "user" ? "bg-gray-300 self-end" : "bg-blue-700"} p-2 rounded-lg max-w-full`}>
+
                             <p
                               className={`${
                               message.type === "bot" ? "text-white" : "text-black"
@@ -233,12 +419,21 @@ const handleKeyDown = (event) => {
                         </div>))
                       }
                       {/* Conditional rendering of buttons */}
-                      {(intent === 5 || intent === 1) && (
+                      {(intent === 5 || intent === 1 || intent == 3) && (
+
                         <div className="mt-2">
                           {intent === 1 && 
                             <button onClick={handleFacialRecognition} className="text-xs rounded-full border border-blue-700 text-blue-700 p-1">
                               Face Recognition
                             </button>}
+                          {intent === 3 && 
+                            <button onClick={handleViewWallet} className="text-xs rounded-full border border-blue-700 text-blue-700 p-1 flex items-center">
+                              Link to Wallet!
+                            <img src="exLink.png" alt="Icon" className="ml-1" width={12} style={{ padding: '1px' }} />
+                          </button>
+                          
+                          }
+
 
                           {intent === 5 &&
                             <>
@@ -257,8 +452,11 @@ const handleKeyDown = (event) => {
                             </>
                           }
                           
+                          
                         </div>
                       )}
+
+
                     </div>
                   </div>
 
@@ -310,17 +508,21 @@ const handleKeyDown = (event) => {
                   <div className="overflow-hidden rounded-lg bg-white shadow">
                     <div className="p-6">
                       <div className="h-[75vh] no-scrollbar">
+                        {previewImage && (
+                          <div className="absolute z-3 w-50 h-50">
+                            <img src={previewImage} alt="Selected Preview" style={{ maxWidth: '100%', maxHeight: '200px', position: 'relative', left: '50%' }} />
+                          </div>
+                        )}
 
-                      <div className="flex w-full h-screen items-center justify-center bg-grey-lighter transform translate-y-[-15%]">
-                        <label className="w-64 flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue hover:text-white">
-                            <svg className="w-8 h-8" fill="#132143" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
-                            </svg>
-                            <span className="mt-2 text-base leading-normal text-[#132143]">Upload an Image</span>
-                            <input type='file' className="hidden" />
-                        </label>
-                      </div>
-
+                        <div className="flex w-full h-screen items-center justify-center bg-grey-lighter transform translate-y-[15%]" onClick={handleUpload}>
+                          <label className="w-64 flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue hover:text-white">
+                              <svg className="w-8 h-8" fill="#132143" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                  <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
+                              </svg>
+                              <span className="mt-2 text-base leading-normal text-[#132143]">Upload a File</span>
+                              <input type='file' className="hidden" onChange={handleFileChange}/>
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -333,3 +535,4 @@ const handleKeyDown = (event) => {
     </>
   );
 }
+

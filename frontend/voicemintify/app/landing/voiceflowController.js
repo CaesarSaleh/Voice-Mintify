@@ -1,6 +1,8 @@
-const apiKey = 'VF.DM.658e044ad7bebc00071bbd11.IB2dwz97FYiDcAFH'//process.env.API_KEY
-const userID = '11'; // Unique ID used to track conversation state
-const versionID = '658df316ba0264c210ba3b7f'//process.env.VERSION_ID; // Unique ID of the Voiceflow version to use for interaction
+const apiKey = `VF.DM.658e044ad7bebc00071bbd11.IB2dwz97FYiDcAFH`; // Voiceflow API key
+const userID = `11`; // Unique ID of the user interacting with the Voiceflow project
+const versionID = `658df316ba0264c210ba3b7f`; // Unique ID of the Voiceflow project version to interact with
+
+
 // POST: Interact
 const botInteract = async () => {
     try {
@@ -74,4 +76,5 @@ module.exports = {
   botInteract, 
   botUpdate
   }
+
 ;
