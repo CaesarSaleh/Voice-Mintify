@@ -5,6 +5,7 @@ import { useState, useEffect, Fragment } from "react";
 import { Menu, Popover, Transition  } from "@headlessui/react";
 import {botInteract, botUpdate} from "./voiceflowController";
 import useSpeechRecognition from "./speech";
+
 export default function Landing() {
   
   const [inputValue, setInputValue] = useState("");
@@ -30,6 +31,7 @@ export default function Landing() {
       };
       reader.readAsDataURL(file);
       console.log("Uploading file:", selectedFile);
+
 
       // Example data for the mintNFT request
       const mintNFTData = {
@@ -276,6 +278,50 @@ const handleKeyDown = (event) => {
     } catch (error) {
       console.error("Error updating interaction:", error);
     }
+
+  }
+
+  //===============================================================================================================================
+
+  const handleFacialRecognition = async () => {
+    // Open the new window
+    window.open("https://google.com", "_blank");
+    handleAll("yes");
+  }
+
+  const handleMint = async () => {
+    handleAll("I want to mint my art.");
+  }
+
+  const handleWallet = async () => {
+    handleAll("I want to see my wallet.");
+  }
+
+  const handleSell = async () => {
+    handleAll("I want to sell this work to someone!")
+  }
+  
+  const handleBye = async () => {
+    handleAll("Bye bye")
+  }
+
+  const handleAll = async (input) => {
+    try {
+      // Send user input and get the bot's response
+      const list = await botUpdate(input);
+      // Update state based on previous state using the functional form
+      if (list){
+        setChatMessages((prevChatMessages) => [
+          ...prevChatMessages,
+          ...list.map((message) => ({ type: "bot", text: message.slice(0,-1) })),
+        ]);
+      }
+      console.log(list)
+      setIntent(parseInt(list[list.length - 1].charAt(list[list.length - 1].length - 1)));
+      console.log(intent);
+    } catch (error) {
+      console.error("Error updating interaction:", error);
+    }
   }
 
   
@@ -360,7 +406,9 @@ const handleKeyDown = (event) => {
                     <div className="flex flex-col items-start space-y-2 ">
                       {chatMessages.map((message, index) => (
                         <div
-                          key = {index} className={`flex items-start ${message.type === "user" ? "bg-gray-300 self-end" : "bg-blue-700"} p-2 rounded-lg max-w-[350px]`}>
+
+                          key = {index} className={`flex items-start ${message.type === "user" ? "bg-gray-300 self-end" : "bg-blue-700"} p-2 rounded-lg max-w-full`}>
+
                             <p
                               className={`${
                               message.type === "bot" ? "text-white" : "text-black"
@@ -372,6 +420,7 @@ const handleKeyDown = (event) => {
                       }
                       {/* Conditional rendering of buttons */}
                       {(intent === 5 || intent === 1 || intent == 3) && (
+
                         <div className="mt-2">
                           {intent === 1 && 
                             <button onClick={handleFacialRecognition} className="text-xs rounded-full border border-blue-700 text-blue-700 p-1">
@@ -384,6 +433,7 @@ const handleKeyDown = (event) => {
                           </button>
                           
                           }
+
 
                           {intent === 5 &&
                             <>
@@ -405,6 +455,7 @@ const handleKeyDown = (event) => {
                           
                         </div>
                       )}
+
 
                     </div>
                   </div>
