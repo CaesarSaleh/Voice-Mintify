@@ -32,8 +32,8 @@ Blockchain Integration: Utilizes blockchain technology for secure and transparen
 
 User-Friendly Interface: The frontend provides an intuitive interface for easy navigation and interaction.
 
-![Alt Text](https://example.com/image.jpg)
-![Alt Text](https://example.com/image.jpg)
+![Alt Text](https://drive.google.com/file/d/1fwsOF2NP1bbOF2gPVC5xPGHp-ejRePKx/view?usp=sharing)
+![Alt Text](https://drive.google.com/file/d/1Vh7RTZQS1HTbPrM7i8FZXZoSsfMNi5m-/view?usp=sharing)
 ![Alt Text](https://example.com/image.jpg)
 
 
