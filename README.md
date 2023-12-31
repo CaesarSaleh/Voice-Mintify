@@ -1,4 +1,4 @@
-# ChatBot NFT Minting and Selling App
+# VoiceMintify
 
 Welcome to the ChatBot NFT Minting and Selling App! This application allows users to interact with a chatbot to mint and sell NFTs on the blockchain. The process is streamlined and user-friendly, providing a seamless experience for both minting and selling digital assets.
 
