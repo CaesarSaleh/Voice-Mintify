@@ -1,6 +1,7 @@
-const apiKey = 'VF.DM.658e044ad7bebc00071bbd11.IB2dwz97FYiDcAFH'//process.env.API_KEY
-const userID = '11'; // Unique ID used to track conversation state
-const versionID = '658df316ba0264c210ba3b7f'//process.env.VERSION_ID; // Unique ID of the Voiceflow version to use for interaction
+const apiKey = `VF.DM.658e044ad7bebc00071bbd11.IB2dwz97FYiDcAFH`; // Voiceflow API key
+const userID = `11`; // Unique ID of the user interacting with the Voiceflow project
+const versionID = `658df316ba0264c210ba3b7f`; // Unique ID of the Voiceflow project version to interact with
+
 // POST: Interact
 const botInteract = async () => {
     try {
@@ -63,15 +64,7 @@ const botUpdate = async (userInput) => {
       }
     }
     
-
-    let intent = 0; // DEFAULT INTENT
-    if (responseData[0].payload.path === "choice:1"){
-      intent = 1  // MINT NFT INTENT
-    }
-    if ((responseData[0].payload.path === "choice:2")){
-      intent = 2  // SELL NFT INTENT
-    }
-    return {list, intent};
+    return list;
   } catch (error) {
     console.error('Error updating:', error.message || error);
   }
