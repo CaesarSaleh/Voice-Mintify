@@ -35,7 +35,7 @@ User-Friendly Interface: The frontend provides an intuitive interface for easy n
 ![Alt Text](frontend/voicemintify/public/public/login.png)
 ![Alt Text](frontend/voicemintify/public/public/conversation.png)
 ![Alt Text](frontend/voicemintify/public/public/upload.png)
-![Alt Text](frontend/voicemintify/public/public/verified.jpg)
+![Alt Text](frontend/voicemintify/public/public/verified.png)
 
 
 Technologies Used
