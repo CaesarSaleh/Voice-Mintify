@@ -52,7 +52,7 @@ Marshal Guo
 Kuzey Ozterac
 Caesar Saleh
 
-### License
+### License:
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 Feel free to explore, contribute, and enjoy using the ChatBot NFT Minting and Selling App! If you have any questions or feedback, please don't hesitate to reach out to the project contributors.
