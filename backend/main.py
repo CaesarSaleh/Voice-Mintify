@@ -84,8 +84,8 @@ def face_detect():
                 cv2.putText(imgOrignal, "Verified", (x, y-10), font,
                             0.75, (255, 255, 255), 1, cv2.LINE_AA)
             elif classIndex == 1:
-                cv2.rectangle(imgOrignal, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                cv2.rectangle(imgOrignal, (x, y-40), (x+w, y), (0, 255, 0), -2)
+                cv2.rectangle(imgOrignal, (x, y), (x+w, y+h), (0, 0, 255), 2)
+                cv2.rectangle(imgOrignal, (x, y-40), (x+w, y), (0, 0, 255), -2)
                 cv2.putText(imgOrignal, "Not Verified", (x, y-10),
                             font, 0.75, (255, 255, 255), 1, cv2.LINE_AA)
 
