@@ -32,9 +32,10 @@ Blockchain Integration: Utilizes blockchain technology for secure and transparen
 
 User-Friendly Interface: The frontend provides an intuitive interface for easy navigation and interaction.
 
-![Alt Text](frontend/voicemintify/public/login.png)
-![Alt Text](frontend/voicemintify/public/upload.png)
-![Alt Text](frontend/voicemintify/public/verified.jpg)
+![Alt Text](frontend/voicemintify/public/public/login.png)
+![Alt Text](frontend/voicemintify/public/public/conversation.png)
+![Alt Text](frontend/voicemintify/public/public/upload.png)
+![Alt Text](frontend/voicemintify/public/public/verified.jpg)
 
 
 Technologies Used
