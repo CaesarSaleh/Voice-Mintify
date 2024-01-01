@@ -38,16 +38,21 @@ User-Friendly Interface: The frontend provides an intuitive interface for easy n
 ![Alt Text](frontend/voicemintify/public/public/verified.png)
 
 
-Technologies Used
-Python
-Blockchain (Specify the blockchain platform used, e.g., Ethereum)
-Node.js
-Vue.js
-Contributors
-Your Name
-Contributor 1
-Contributor 2
-License
+### Technologies Used:
+Flask
+Express
+Tensorflow
+Keras
+Nextjs
+TailWindCSS
+
+
+### Contributors:
+Marshal Guo
+Kuzey Ozterac
+Caesar Saleh
+
+###License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 Feel free to explore, contribute, and enjoy using the ChatBot NFT Minting and Selling App! If you have any questions or feedback, please don't hesitate to reach out to the project contributors.
