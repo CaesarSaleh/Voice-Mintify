@@ -9,7 +9,7 @@ To use the ChatBot NFT Minting and Selling App, follow these simple steps:
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/chatbot-nft-app.git
+   git clone https://github.com/your-username/Voice-Mintify.git
 Navigate to the backend folder and start the backend server:
 
 bash
